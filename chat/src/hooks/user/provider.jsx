@@ -15,7 +15,7 @@ export const UserProvider = ({ children }) => {
         return {
           ...oldData,
           chats: oldData.chats.map((chat) => {
-            if (!chat.participants.includes(response.id)) return chat;
+            if (chat.id !== response.chatId) return chat;
             if (!chat.messages) {
               chat.messages = [response.newMessage];
             } else {
