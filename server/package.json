@@ -1,0 +1,27 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@faker-js/faker": "^9.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "json-server": "0.17.4",
+    "socket.io": "^4.8.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.0.2"
+  },
+  "type": "module",
+  "main": "index.js",
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}

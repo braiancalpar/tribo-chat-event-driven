@@ -1,0 +1,113 @@
+@use 'config/variables' as *;
+
+.home {
+  &-container {
+    color: $cinza-claro-texto;
+    display: flex;
+    height: 100%;
+    width: 100%;
+  }
+  &-chat {
+    &-container {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-width: 200px;
+      padding: 0 10px;
+      width: 200px;
+
+      @media (max-width: 768px) {
+        width: 150px;
+      }
+    }
+    &-title {
+      color: $cinza-claro-texto;
+      font-size: 25px;
+      font-weight: 600;
+      line-height: 31.25px;
+
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+    }
+    &-input {
+      background-color: $cinza-componentes;
+      border-radius: 8px;
+      position: relative;
+      &:focus {
+        outline: $cinza-claro-texto;
+      }
+      input {
+        background-color: $cinza-componentes;
+        border: none;
+        border-radius: 8px;
+        color: $cinza-claro-texto;
+        height: 30px;
+        overflow: none;
+        padding: 4px 8px;
+        width: calc(100% - 40px);
+        &::placeholder {
+          color: $cinza-claro-texto;
+        }
+        &:focus {
+          outline: none;
+        }
+      }
+      &-icon {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 8px;
+      }
+    }
+    &-content {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow-y: scroll;
+      width: 100%;
+      scrollbar-color: $cinza-claro-texto $cinza-componentes;
+      scrollbar-width: thin;
+      padding-right: 15px;
+    }
+    &-mensagens,
+    &-grupos {
+      flex: 1;
+      overflow: hidden;
+      &-container {
+        width: 100%;
+      }
+      &-title {
+        font-size: 16px;
+        font-weight: 600;
+        width: 100%;
+      }
+
+      &-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      &-button-action {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+      &-new {
+        background-color: $laranja;
+        border: none;
+        border-radius: 8px;
+        color: $cinza-escuro-texto;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 19px;
+        margin: 0 auto;
+        padding: 8px 24px;
+      }
+    }
+  }
+}
