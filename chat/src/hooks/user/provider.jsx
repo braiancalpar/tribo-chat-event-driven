@@ -10,8 +10,8 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     socket.connect();
-    socket.on("nova mensagem", (id) => {
-      console.log("nova mensagem!", id);
+    socket.on("new-message", (data) => {
+      console.log("new message!", data);
     });
     return () => {
       socket.disconnect();
