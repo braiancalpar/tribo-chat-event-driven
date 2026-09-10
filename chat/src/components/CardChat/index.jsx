@@ -1,5 +1,5 @@
-import './styles.scss';
-import Avatar from 'components/Avatar';
+import "./styles.scss";
+import Avatar from "components/Avatar";
 
 export default function CardChat({
   name,
@@ -24,19 +24,19 @@ export default function CardChat({
   }
 
   return (
-    <div className='cardChat-container' onClick={selecionar}>
-      <div className='cardChat-container-image'>
+    <div className="cardChat-container" onClick={selecionar}>
+      <div className="cardChat-container-image">
         <Avatar image={image} />
       </div>
-      <div className='cardChat-container-list'>
-        <div className='cardChat-content'>
-          <h4 className='cardChat-content-nome'>{name}</h4>
-          <div className='cardChat-content-mensagem'>{text}</div>
+      <div className="cardChat-container-list">
+        <div className="cardChat-content">
+          <h4 className="cardChat-content-nome">{name}</h4>
+          <div className="cardChat-content-mensagem">{text}</div>
         </div>
-        <div className='cardChat-metadata'>
-          <span className='cardChat-metadata-data'>{date}</span>
+        <div className="cardChat-metadata">
+          <span className="cardChat-metadata-data">{date}</span>
           {!!unreadMessages && (
-            <div className='cardChat-metadata-mensagens-nao-lidas'>
+            <div className="cardChat-metadata-mensagens-nao-lidas">
               {unreadMessages}
             </div>
           )}

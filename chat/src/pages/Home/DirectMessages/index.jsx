@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import CardChat from 'components/CardChat';
-import useChat from 'hooks/chat';
-import useUser from 'hooks/user';
-import matchFilter from 'utils/matchFilter';
+import CardChat from "components/CardChat";
+import useChat from "hooks/chat";
+import useUser from "hooks/user";
+import matchFilter from "utils/matchFilter";
 
 export default function DirectMessages({ filter }) {
   const { chats } = useUser();
@@ -16,9 +16,9 @@ export default function DirectMessages({ filter }) {
   );
 
   return (
-    <div className='home-chat-mensagens-container'>
-      <h3 className='home-chat-mensagens-title'>Mensagens Diretas</h3>
-      <div className='home-chat-mensagens-list'>
+    <div className="home-chat-mensagens-container">
+      <h3 className="home-chat-mensagens-title">Mensagens Diretas</h3>
+      <div className="home-chat-mensagens-list">
         {messagesWithFilter?.map((message, index) => (
           <CardChat onClick={selectChat} key={index} {...message} />
         ))}

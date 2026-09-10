@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { conversaContext } from './context'
+import { useState } from "react";
+import { conversaContext } from "./context";
 
 export const ConversaProvider = ({ children }) => {
   const [data, setData] = useState(null);
@@ -8,5 +8,5 @@ export const ConversaProvider = ({ children }) => {
     <conversaContext.Provider value={{ data, setData }}>
       {children}
     </conversaContext.Provider>
-  )
-}
+  );
+};
