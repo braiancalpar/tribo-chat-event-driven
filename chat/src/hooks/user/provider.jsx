@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { userContext } from "./context";
 import useChat from "hooks/chat";
 import fetch from "config/fetchInstance";
@@ -10,13 +10,22 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     socket.connect();
-    socket.on("nova mensagem", (id) => {
-      console.log("nova mensagem!", id);
+    socket.on("new-message", (data) => {
+      console.log("new message!!!", data);
     });
     return () => {
       socket.disconnect();
     };
   }, []);
+
+  const chatIds = useMemo(
+    () => data?.chats.map((chat) => chat.id),
+    [data?.chats],
+  );
+
+  useEffect(() => {
+    if (chatIds) socket.emit("join-rooms", chatIds);
+  }, [chatIds]);
 
   useEffect(() => {
     const currentChatIndex = data?.chats.findIndex(

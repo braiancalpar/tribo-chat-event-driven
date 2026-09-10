@@ -1,10 +1,9 @@
 import { io } from "../config/instances.js";
-import UserController from "../controllers/userController.js";
+import UserController from "../controllers/UserController.js";
 
 io.on("connection", (socket) => {
   const userController = UserController();
   io.emit("nova mensagem", socket.id);
-
   socket.on("disconnect", () => {
     io.emit("user disconnected");
     const id = null;
@@ -18,6 +17,10 @@ io.on("connection", (socket) => {
     userController.logoffUser(id, () => {
       io.emit("user-logoff", id);
     });
+  });
+
+  socket.on("join-rooms", (chatIds) => {
+    chatIds.forEach((chatId) => socket.join(`chat${chatId}`));
   });
 
   socket.on("add-user-id", (id) => {
