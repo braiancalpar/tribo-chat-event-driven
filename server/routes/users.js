@@ -1,4 +1,5 @@
 import express from "express";
+import { writeFile } from "../utils/file.js";
 
 function getUsuarioById(id, cb) {
   import("../db.json", { with: { type: "json" } }).then((module) => {
@@ -58,7 +59,7 @@ function getUsuarioById(id, cb) {
           });
         }
       });
-
+      writeFile(newDb);
       cb(user);
     } else cb(null);
   });
