@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { userContext } from "./context";
 import useChat from "hooks/chat";
 import fetch from "config/fetchInstance";
@@ -60,19 +60,37 @@ export const UserProvider = ({ children }) => {
     }
   }, [data?.id, data?.chats, chatData?.id]);
 
+  const changeLoggedStatus = useCallback((id, status) => {
+    setData((oldData) => {
+      if (!oldData) return null;
+      return {
+        ...oldData,
+        chats: oldData.chats.map((chat) => {
+          if (!chat.participants.includes(id)) return chat;
+          chat.isLogged = status;
+          return chat;
+        }),
+      };
+    });
+  }, []);
+
   useEffect(() => {
     if (data?.id) {
       socket.on("new-login", (id) => {
         if (id !== data?.id) {
-          console.log("novo id!", id);
+          changeLoggedStatus(id, true);
         }
+      });
+      socket.on("user-logoff", (id) => {
+        changeLoggedStatus(id, false);
       });
     }
 
     return () => {
       socket.off("new-login");
+      socket.off("user-logoff");
     };
-  }, [data?.id]);
+  }, [data?.id, changeLoggedStatus]);
 
   return (
     <userContext.Provider value={{ data, setData }}>

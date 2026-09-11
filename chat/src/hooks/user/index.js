@@ -1,10 +1,12 @@
 import { useCallback, useContext } from "react";
 import { userContext } from "./context";
+import { socket } from "config/socket";
 
 const useUser = () => {
   const { data, setData } = useContext(userContext);
 
   function login(user) {
+    socket.emit("save-id", user.id);
     setData({ ...user, isLogged: true });
   }
 
@@ -22,6 +24,7 @@ const useUser = () => {
   );
 
   function logout() {
+    socket.emit("logoff", data.id);
     setData(null);
   }
 
