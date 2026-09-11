@@ -30,10 +30,13 @@ export default function Display() {
       }).format(new Date()),
       id: data.id,
     };
+
     newMessage.otherUserId = data.participants.find(
       (participantId) => id !== participantId,
     );
 
+    // A mensagem será adicionada pelo evento do Socket.IO para todos os
+    // participantes, inclusive o remetente, evitando duplicidade no estado.
     fetch.post(`/api/chats/${data.id}/messages`, newMessage);
     setNewMessageText("");
   }

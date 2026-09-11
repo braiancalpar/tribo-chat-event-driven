@@ -6,35 +6,60 @@ import { socket } from "config/socket";
 
 export const UserProvider = ({ children }) => {
   const [data, setData] = useState(null);
-  const { data: chatData } = useChat();
+  const { data: chatData, setData: setChatData } = useChat();
 
   useEffect(() => {
     socket.connect();
+
+    // 1) Escuta mensagens novas.
+    //    Aqui a correção principal é nunca mutar o objeto antigo do estado.
     socket.on("new-message", (response) => {
       setData((oldData) => {
+        if (!oldData) return oldData;
+
         return {
           ...oldData,
           chats: oldData.chats.map((chat) => {
-            if (chat.id !== response.chatId) return chat;
-            if (!chat.messages) {
-              chat.messages = [response.newMessage];
-            } else {
-              chat.messages.push(response.newMessage);
-            }
-            chat.unreadMessages += 1;
-            return chat;
+            if (String(chat.id) !== String(response.chatId)) return chat;
+
+            const messages = chat.messages ? [...chat.messages] : [];
+            messages.push(response.newMessage);
+
+            return {
+              ...chat,
+              messages,
+              unreadMessages: (chat.unreadMessages || 0) + 1,
+            };
           }),
         };
       });
+
+      // O Display renderiza a conversa selecionada pelo contexto de chat,
+      // então ela também precisa receber a mensagem sem trocar de conversa.
+      setChatData((oldChat) => {
+        if (
+          !oldChat ||
+          String(oldChat.id) !== String(response.chatId)
+        ) {
+          return oldChat;
+        }
+
+        return {
+          ...oldChat,
+          messages: [...(oldChat.messages || []), response.newMessage],
+          unreadMessages: 0,
+        };
+      });
     });
+
     return () => {
       socket.off("new-message");
       socket.disconnect();
     };
-  }, []);
+  }, [setChatData]);
 
   const chatIds = useMemo(
-    () => data?.chats.map((chat) => chat.id),
+    () => data?.chats?.map((chat) => chat.id),
     [data?.chats],
   );
 
@@ -43,10 +68,11 @@ export const UserProvider = ({ children }) => {
   }, [chatIds]);
 
   useEffect(() => {
-    const currentChatIndex = data?.chats.findIndex(
+    const currentChatIndex = data?.chats?.findIndex(
       (chat) => chat.id === chatData?.id,
     );
-    if (data?.chats[currentChatIndex]?.unreadMessages > 0) {
+
+    if (data?.chats?.[currentChatIndex]?.unreadMessages > 0) {
       setData((oldData) => ({
         ...oldData,
         chats: oldData.chats.map((chat) => {
@@ -56,39 +82,60 @@ export const UserProvider = ({ children }) => {
           return chat;
         }),
       }));
+
       fetch.post(`/api/chats/${chatData?.id}/readMessages`, { id: data.id });
     }
   }, [data?.id, data?.chats, chatData?.id]);
 
+  // 2) Atualiza o status online sem mutar o objeto antigo do chat.
+  //    O erro anterior era `chat.isLogged = status`, que mutava o estado e
+  //    impedia o React de perceber a mudança imediata.
   const changeLoggedStatus = useCallback((id, status) => {
     setData((oldData) => {
       if (!oldData) return null;
+
       return {
         ...oldData,
         chats: oldData.chats.map((chat) => {
           if (!chat.participants.includes(id)) return chat;
-          chat.isLogged = status;
-          return chat;
+
+          return {
+            ...chat,
+            isLogged: status,
+          };
         }),
       };
     });
   }, []);
 
   useEffect(() => {
-    if (data?.id) {
-      socket.on("new-login", (id) => {
-        if (id !== data?.id) {
-          changeLoggedStatus(id, true);
-        }
-      });
-      socket.on("user-logoff", (id) => {
+    if (!data?.id) return;
+
+    // 3) Quando um cliente entra, ele recebe a lista completa de online users.
+    socket.on("online-users", (ids) => {
+      ids
+        .filter((userId) => Number(userId) !== Number(data.id))
+        .forEach((userId) => changeLoggedStatus(userId, true));
+    });
+
+    // 4) Quando outro usuário entra, atualiza somente esse contato.
+    socket.on("user-online", (id) => {
+      if (Number(id) !== Number(data.id)) {
+        changeLoggedStatus(id, true);
+      }
+    });
+
+    // 5) Quando outro usuário sai, atualiza status offline.
+    socket.on("user-offline", (id) => {
+      if (Number(id) !== Number(data.id)) {
         changeLoggedStatus(id, false);
-      });
-    }
+      }
+    });
 
     return () => {
-      socket.off("new-login");
-      socket.off("user-logoff");
+      socket.off("online-users");
+      socket.off("user-online");
+      socket.off("user-offline");
     };
   }, [data?.id, changeLoggedStatus]);
 
