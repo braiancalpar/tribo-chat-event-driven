@@ -8,6 +8,7 @@ export default function CardChat({
   messages = [],
   image,
   onClick,
+  isLogged,
   ...props
 }) {
   const text = messages[messages.length - 1]?.text;
@@ -19,6 +20,7 @@ export default function CardChat({
       unreadMessages,
       messages,
       image,
+      isLogged,
       ...props,
     });
   }
@@ -26,7 +28,7 @@ export default function CardChat({
   return (
     <div className="cardChat-container" onClick={selecionar}>
       <div className="cardChat-container-image">
-        <Avatar image={image} />
+        <Avatar image={image} isLogged={isLogged} />
       </div>
       <div className="cardChat-container-list">
         <div className="cardChat-content">
