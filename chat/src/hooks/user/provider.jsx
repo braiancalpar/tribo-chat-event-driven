@@ -72,7 +72,7 @@ export const UserProvider = ({ children }) => {
     return () => {
       socket.off("new-login");
     };
-  }, []);
+  }, [data?.id]);
 
   return (
     <userContext.Provider value={{ data, setData }}>

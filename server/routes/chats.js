@@ -19,7 +19,7 @@ chatsRouter.post("/:id/messages", (req, res) => {
     const currentOtherUser = newDb.users[otherUserIndex];
     let chatId = req.params.id;
     let chatIndex = newDb.chats.findIndex(
-      (chatDb) => String(chatDb).id === chatId,
+      (chatDb) => String(chatDb.id) === chatId,
     );
     let userChatIndex = currentUser.chats.findIndex((chatDb) =>
       chatDb.participants.includes(req.body.otherUserId),
@@ -104,7 +104,7 @@ chatsRouter.post("/:chatId/readMessages", (req, res) => {
     );
     const currentUser = newDb.users[userIndex];
     const userChatIndex = currentUser.chats.findIndex(
-      (chatDb) => String(chatDb).id === chatId,
+      (chatDb) => String(chatDb.id) === chatId,
     );
     currentUser.chats[userChatIndex].unreadMessages = 0;
     io.emit("read-message", currentUser);
