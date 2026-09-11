@@ -17,8 +17,10 @@ chatsRouter.post("/:id/messages", (req, res) => {
     );
     const currentUser = newDb.users[userIndex];
     const currentOtherUser = newDb.users[otherUserIndex];
-    let chatId = Number(req.params.id);
-    let chatIndex = newDb.chats.findIndex((chatDb) => chatDb.id === chatId);
+    let chatId = req.params.id;
+    let chatIndex = newDb.chats.findIndex(
+      (chatDb) => String(chatDb.id) === chatId,
+    );
     let userChatIndex = currentUser.chats.findIndex((chatDb) =>
       chatDb.participants.includes(req.body.otherUserId),
     );
@@ -96,13 +98,13 @@ chatsRouter.post("/:chatId/readMessages", (req, res) => {
     const dbFromImport = module.default;
     const newDb = { ...dbFromImport };
 
-    const chatId = Number(req.params.chatId);
+    const chatId = req.params.chatId;
     const userIndex = newDb.users.findIndex(
       (userDb) => userDb.id === req.body.id,
     );
     const currentUser = newDb.users[userIndex];
     const userChatIndex = currentUser.chats.findIndex(
-      (chatDb) => chatDb.id === chatId,
+      (chatDb) => String(chatDb.id) === chatId,
     );
     currentUser.chats[userChatIndex].unreadMessages = 0;
     io.emit("read-message", currentUser);
