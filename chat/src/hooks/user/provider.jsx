@@ -68,6 +68,7 @@ export const UserProvider = ({ children }) => {
         chats: oldData.chats.map((chat) => {
           if (!chat.participants.includes(id)) return chat;
           chat.isLogged = status;
+          return chat;
         }),
       };
     });
@@ -77,13 +78,17 @@ export const UserProvider = ({ children }) => {
     if (data?.id) {
       socket.on("new-login", (id) => {
         if (id !== data?.id) {
-          changeLoggedStatus(data.id, true);
+          changeLoggedStatus(id, true);
         }
+      });
+      socket.on("user-logoff", (id) => {
+        changeLoggedStatus(id, false);
       });
     }
 
     return () => {
       socket.off("new-login");
+      socket.off("user-logoff");
     };
   }, [data?.id, changeLoggedStatus]);
 
